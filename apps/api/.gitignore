@@ -2,4 +2,11 @@ node_modules
 # Keep environment variables out of version control
 .env
 
+# Generated Prisma client (regenerated with `prisma generate`)
 /generated/prisma
+
+# Prisma CLI skill files (installed by `prisma init`)
+.claude/
+.windsurf/
+.agents/
+skills-lock.json
