@@ -13,7 +13,7 @@ export class AppController {
   getInfo() {
     return this.appService.getInfo();
   }
-
+  
   @Get('health')
   getHealth() {
     return this.appService.checkHealth();

@@ -1,6 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { ProductsService } from './products.service';
 
 @Controller('products')
 export class ProductsController {
-  // HTTP endpointy se sem přidají postupně
+  constructor(private readonly productsService: ProductsService) {}
+
+  @Get()
+  getProducts() {
+    return this.productsService.getProducts();
+  }
 }

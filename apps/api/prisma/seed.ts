@@ -27,8 +27,15 @@ function slugify(name: string): string {
     .replace(/(^-|-$)/g, '');
 }
 
+const users = [
+  { email: 'owner@example.com', name: 'Store Owner' },
+  { email: 'customer1@example.com', name: 'Anna Novak' },
+  { email: 'customer2@example.com', name: 'Petr Svoboda' },
+];
+
 async function main() {
   await prisma.product.deleteMany();
+  await prisma.user.deleteMany();
 
   await prisma.product.createMany({
     data: products.map((p) => ({
@@ -38,8 +45,15 @@ async function main() {
     })),
   });
 
-  const count = await prisma.product.count();
-  console.log(`Seeded ${count} products`);
+  await prisma.user.createMany({
+    data: users,
+  });
+
+  const [productCount, userCount] = await prisma.$transaction([
+    prisma.product.count(),
+    prisma.user.count(),
+  ]);
+  console.log(`Seeded ${productCount} products, ${userCount} users`);
 }
 
 main()
