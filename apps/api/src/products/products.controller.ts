@@ -12,6 +12,11 @@ export class ProductsController {
     return this.productsService.getProducts();
   }
 
+  @Get('featured')
+  getFeatured() {
+    return this.productsService.getFeatured();
+  }
+
   @Get(':slug')
   getProductBySlug(@Param('slug') slug: string) {
     return this.productsService.getProductBySlug(slug);

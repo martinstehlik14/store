@@ -16,16 +16,36 @@ function slugify(name: string): string {
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  getProducts() {
-    return this.prisma.product.findMany({
+  async getProducts() {
+    const products = await this.prisma.product.findMany({
       select: {
         id: true,
         name: true,
         description: true,
         price: true,
+        stock: true,
         category: { select: { id: true, name: true, slug: true } },
       },
     });
+
+    return products.map((p) => ({ ...p, inStock: p.stock > 0 }));
+  }
+
+  async getFeatured() {
+    const products = await this.prisma.product.findMany({
+      where: { isFeatured: true },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        price: true,
+        stock: true,
+        imageUrl: true,
+        category: { select: { id: true, name: true, slug: true } },
+      },
+    });
+
+    return products.map((p) => ({ ...p, inStock: p.stock > 0 }));
   }
 
   addProduct(dto: CreateProductDto) {

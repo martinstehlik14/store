@@ -20,16 +20,16 @@ const categories = [
 ];
 
 const products = [
-  { name: 'Wireless Mouse', description: 'Ergonomic 2.4GHz wireless mouse, 1600 DPI', price: 24.99, stock: 50, category: 'Electronics' },
+  { name: 'Wireless Mouse', description: 'Ergonomic 2.4GHz wireless mouse, 1600 DPI', price: 24.99, stock: 50, category: 'Electronics', featured: true },
   { name: 'Mechanical Keyboard', description: 'RGB backlit mechanical keyboard with hot-swappable switches', price: 89.99, stock: 25, category: 'Electronics' },
-  { name: '27" 4K Monitor', description: 'IPS panel, 99% sRGB, USB-C with 65W power delivery', price: 349.0, stock: 10, category: 'Electronics' },
-  { name: 'Noise-Cancelling Headphones', description: 'Over-ear ANC headphones, 30h battery life', price: 199.0, stock: 15, category: 'Audio' },
+  { name: '27" 4K Monitor', description: 'IPS panel, 99% sRGB, USB-C with 65W power delivery', price: 349.0, stock: 10, category: 'Electronics', featured: true },
+  { name: 'Noise-Cancelling Headphones', description: 'Over-ear ANC headphones, 30h battery life', price: 199.0, stock: 15, category: 'Audio', featured: true },
   { name: 'Portable Bluetooth Speaker', description: 'Waterproof IPX7, 12h playback, 360° sound', price: 59.99, stock: 40, category: 'Audio' },
   { name: 'USB-C Microphone', description: 'Studio-quality condenser mic for podcasts and calls', price: 129.99, stock: 20, category: 'Audio' },
   { name: 'Smart Coffee Maker', description: 'Wi-Fi enabled, programmable, app control', price: 119.0, stock: 12, category: 'Home & Kitchen' },
   { name: 'Air Fryer 5L', description: '5L capacity, 8 presets, dishwasher-safe parts', price: 89.99, stock: 30, category: 'Home & Kitchen' },
-  { name: 'Robot Vacuum', description: 'LiDAR navigation, 3000Pa suction, auto-return', price: 259.0, stock: 8, category: 'Home & Kitchen' },
-  { name: 'Smart Fitness Watch', description: 'GPS, heart rate, sleep tracking, 7-day battery', price: 149.99, stock: 22, category: 'Fitness' },
+  { name: 'Robot Vacuum', description: 'LiDAR navigation, 3000Pa suction, auto-return', price: 259.0, stock: 0, category: 'Home & Kitchen', featured: true },
+  { name: 'Smart Fitness Watch', description: 'GPS, heart rate, sleep tracking, 7-day battery', price: 149.99, stock: 22, category: 'Fitness', featured: true },
   { name: 'Yoga Mat Pro', description: 'Non-slip 6mm mat with carry strap', price: 34.99, stock: 60, category: 'Fitness' },
   { name: 'Adjustable Dumbbells 24kg', description: '2.5-24kg per hand, compact design', price: 299.0, stock: 5, category: 'Fitness' },
 ];
@@ -61,6 +61,7 @@ async function main() {
       slug: slugify(p.name),
       imageUrl: `https://picsum.photos/seed/${slugify(p.name)}/600/600`,
       categoryId: categoryBySlug.get(slugify(p.category))!,
+      isFeatured: p.featured ?? false,
     })),
   });
 
