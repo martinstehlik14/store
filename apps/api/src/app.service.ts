@@ -5,14 +5,10 @@ import { PrismaService } from './prisma/prisma.service';
 export class AppService {
   constructor(private readonly prisma: PrismaService) {}
 
-  getHello(): string {
-    return 'Hello World!';
-  }
-  
   getInfo() {
     return {
       name: 'api',
-      version: '1.0.0',
+      version: '0.0.1',
       description: 'API service for the application',
     };
   }

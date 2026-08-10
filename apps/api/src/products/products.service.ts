@@ -22,6 +22,7 @@ export class ProductsService {
         name: true,
         description: true,
         price: true,
+        category: { select: { id: true, name: true, slug: true } },
       },
     });
   }
