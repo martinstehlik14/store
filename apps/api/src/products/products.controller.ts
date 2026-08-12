@@ -8,36 +8,36 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-  getProducts() {
-    return this.productsService.getProducts();
+  findAll() {
+    return this.productsService.findAll();
   }
 
   @Get('featured')
-  getFeatured() {
-    return this.productsService.getFeatured();
+  findFeatured() {
+    return this.productsService.findFeatured();
   }
 
   @Get(':slug')
-  getProductBySlug(@Param('slug') slug: string) {
-    return this.productsService.getProductBySlug(slug);
+  findOne(@Param('slug') slug: string) {
+    return this.productsService.findOne(slug);
   }
 
   @Post()
-  addProduct(@Body(new ValidationPipe({ transform: true })) dto: CreateProductDto) {
-    return this.productsService.addProduct(dto);
+  create(@Body(new ValidationPipe({ transform: true })) dto: CreateProductDto) {
+    return this.productsService.create(dto);
   }
 
   @Patch(':id')
-  updateProduct(
+  update(
     @Param('id') id: string,
     @Body(new ValidationPipe({ transform: true })) dto: UpdateProductDto,
   ) {
-    return this.productsService.updateProduct(id, dto);
+    return this.productsService.update(id, dto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  async removeProduct(@Param('id') id: string) {
-    await this.productsService.removeProduct(id);
+  async remove(@Param('id') id: string) {
+    await this.productsService.remove(id);
   }
 }

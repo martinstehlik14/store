@@ -1,7 +1,7 @@
 {
-  "name": "api",
-  "version": "0.0.1",
-  "description": "",
+  "name": "store-api",
+  "version": "0.1.0",
+  "description": "E-commerce REST API — products, categories, users, orders, payments",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
@@ -67,6 +67,9 @@
       "json",
       "ts"
     ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {

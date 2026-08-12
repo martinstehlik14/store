@@ -2,14 +2,15 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import pkg from '../package.json';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Store API')
-    .setDescription('E-commerce backend — products, users, orders, payments')
-    .setVersion('0.1.0')
+    .setTitle(pkg.name)
+    .setDescription(pkg.description)
+    .setVersion(pkg.version)
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);

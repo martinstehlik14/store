@@ -16,39 +16,35 @@ function slugify(name: string): string {
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getProducts() {
+  private productListSelect = {
+    id: true,
+    name: true,
+    slug: true,
+    description: true,
+    price: true,
+    stock: true,
+    imageUrl: true,
+    category: { select: { id: true, name: true, slug: true } },
+  } as const;
+
+  async findAll() {
     const products = await this.prisma.product.findMany({
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        price: true,
-        stock: true,
-        category: { select: { id: true, name: true, slug: true } },
-      },
+      select: this.productListSelect,
     });
 
     return products.map((p) => ({ ...p, inStock: p.stock > 0 }));
   }
 
-  async getFeatured() {
+  async findFeatured() {
     const products = await this.prisma.product.findMany({
       where: { isFeatured: true },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        price: true,
-        stock: true,
-        imageUrl: true,
-        category: { select: { id: true, name: true, slug: true } },
-      },
+      select: this.productListSelect,
     });
 
     return products.map((p) => ({ ...p, inStock: p.stock > 0 }));
   }
 
-  addProduct(dto: CreateProductDto) {
+  create(dto: CreateProductDto) {
     return this.prisma.product.create({
       data: {
         ...dto,
@@ -57,7 +53,7 @@ export class ProductsService {
     });
   }
 
-  async getProductBySlug(slug: string) {
+  async findOne(slug: string) {
     const product = await this.prisma.product.findUnique({
       where: { slug },
       include: {
@@ -87,7 +83,7 @@ export class ProductsService {
     return { ...product, related };
   }
 
-  async updateProduct(id: string, dto: UpdateProductDto) {
+  async update(id: string, dto: UpdateProductDto) {
     const product = await this.prisma.product.findUnique({ where: { id } });
 
     if (!product) {
@@ -103,7 +99,7 @@ export class ProductsService {
     });
   }
 
-  async removeProduct(id: string) {
+  async remove(id: string) {
     const product = await this.prisma.product.findUnique({ where: { id } });
 
     if (!product) {
