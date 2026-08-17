@@ -80,7 +80,34 @@ export class ProductsService {
       take: 4,
     });
 
-    return { ...product, related };
+    const [reviews, ratingAgg] = await this.prisma.$transaction([
+      this.prisma.review.findMany({
+        where: { productId: product.id },
+        select: {
+          id: true,
+          rating: true,
+          comment: true,
+          createdAt: true,
+          user: { select: { id: true, name: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.review.aggregate({
+        where: { productId: product.id },
+        _avg: { rating: true },
+        _count: true,
+      }),
+    ]);
+
+    return {
+      ...product,
+      related,
+      reviews,
+      rating: {
+        average: ratingAgg._avg.rating ?? 0,
+        count: ratingAgg._count,
+      },
+    };
   }
 
   async update(id: string, dto: UpdateProductDto) {
