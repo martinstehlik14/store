@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
+import pkg from '../package.json';
 
 @Injectable()
 export class AppService {
@@ -7,9 +8,11 @@ export class AppService {
 
   getInfo() {
     return {
-      name: 'api',
-      version: '0.0.1',
-      description: 'API service for the application',
+      name: pkg.name,
+      version: pkg.version,
+      description: pkg.description,
+      docs: '/api/docs',
+      health: '/health',
     };
   }
 
