@@ -41,6 +41,7 @@ const users = [
 ];
 
 async function main() {
+  await prisma.review.deleteMany();
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
   await prisma.user.deleteMany();
@@ -65,16 +66,42 @@ async function main() {
     })),
   });
 
+  const demoCustomer = await prisma.user.create({
+    data: { email: 'demo-customer@example.com', name: 'Demo Customer', id: 'demo-customer' },
+  });
+  await prisma.user.create({
+    data: { email: 'anna@example.com', name: 'Anna Novak', id: 'user-anna' },
+  });
   await prisma.user.createMany({
-    data: users,
+    data: users.filter((u) => !['demo-customer@example.com', 'anna@example.com'].includes(u.email)),
   });
 
-  const [productCount, categoryCount, userCount] = await prisma.$transaction([
+  const productBySlug = new Map(
+    (await prisma.product.findMany({ select: { id: true, slug: true } })).map((p) => [p.slug, p.id]),
+  );
+  const reviews = [
+    { slug: 'wireless-mouse', rating: 5, comment: 'Great mouse, very comfortable for long sessions.', user: 'demo-customer' },
+    { slug: 'wireless-mouse', rating: 4, comment: 'Solid build, battery lasts weeks.', user: 'anna' },
+    { slug: 'mechanical-keyboard', rating: 5, comment: 'The best keyboard I have ever owned.', user: 'demo-customer' },
+    { slug: '27-4k-monitor', rating: 4, comment: 'Crisp image, USB-C power delivery is handy.', user: 'demo-customer' },
+    { slug: 'noise-cancelling-headphones', rating: 5, comment: 'ANC is outstanding, worth every penny.', user: 'demo-customer' },
+  ];
+  await prisma.review.createMany({
+    data: reviews.map((r) => ({
+      rating: r.rating,
+      comment: r.comment,
+      productId: productBySlug.get(r.slug)!,
+      userId: r.user === 'anna' ? 'user-anna' : 'demo-customer',
+    })),
+  });
+
+  const [productCount, categoryCount, userCount, reviewCount] = await prisma.$transaction([
     prisma.product.count(),
     prisma.category.count(),
     prisma.user.count(),
+    prisma.review.count(),
   ]);
-  console.log(`Seeded ${productCount} products, ${categoryCount} categories, ${userCount} users`);
+  console.log(`Seeded ${productCount} products, ${categoryCount} categories, ${userCount} users, ${reviewCount} reviews`);
 }
 
 main()
