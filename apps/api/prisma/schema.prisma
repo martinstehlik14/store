@@ -33,11 +33,19 @@ model Product {
   reviews Review[]
 }
 
+enum Role {
+  CUSTOMER
+  ADMIN
+  SUPERADMIN
+}
+
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  createdAt DateTime @default(now())
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role     @default(CUSTOMER)
+  createdAt    DateTime @default(now())
 
   reviews Review[]
 }
