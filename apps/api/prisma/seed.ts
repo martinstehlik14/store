@@ -1,5 +1,6 @@
 import { PrismaClient } from '../generated/prisma/client';
 import { createPrismaAdapter } from './client';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient({ adapter: createPrismaAdapter() });
 
@@ -35,9 +36,11 @@ const products = [
 ];
 
 const users = [
-  { email: 'owner@example.com', name: 'Store Owner' },
-  { email: 'customer1@example.com', name: 'Anna Novak' },
-  { email: 'customer2@example.com', name: 'Petr Svoboda' },
+  { email: 'superadmin@example.com', name: 'Super Admin', role: 'SUPERADMIN' as const },
+  { email: 'admin@example.com', name: 'Store Admin', role: 'ADMIN' as const },
+  { email: 'owner@example.com', name: 'Store Owner', role: 'ADMIN' as const },
+  { email: 'customer1@example.com', name: 'Anna Novak', role: 'CUSTOMER' as const },
+  { email: 'customer2@example.com', name: 'Petr Svoboda', role: 'CUSTOMER' as const },
 ];
 
 async function main() {
@@ -66,14 +69,31 @@ async function main() {
     })),
   });
 
+  const usersWithHash = await Promise.all(
+    users.map(async (u) => ({
+      ...u,
+      passwordHash: await bcrypt.hash('password123', 10),
+    })),
+  );
+  await prisma.user.createMany({
+    data: usersWithHash,
+  });
+
   const demoCustomer = await prisma.user.create({
-    data: { email: 'demo-customer@example.com', name: 'Demo Customer', id: 'demo-customer' },
+    data: {
+      email: 'demo-customer@example.com',
+      name: 'Demo Customer',
+      id: 'demo-customer',
+      passwordHash: await bcrypt.hash('password123', 10),
+    },
   });
   await prisma.user.create({
-    data: { email: 'anna@example.com', name: 'Anna Novak', id: 'user-anna' },
-  });
-  await prisma.user.createMany({
-    data: users.filter((u) => !['demo-customer@example.com', 'anna@example.com'].includes(u.email)),
+    data: {
+      email: 'anna@example.com',
+      name: 'Anna Novak',
+      id: 'user-anna',
+      passwordHash: await bcrypt.hash('password123', 10),
+    },
   });
 
   const productBySlug = new Map(

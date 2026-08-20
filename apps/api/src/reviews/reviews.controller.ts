@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Param, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UseGuards, ValidationPipe, UnauthorizedException } from '@nestjs/common';
+import type { Request } from 'express';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('products')
 export class ReviewsController {
@@ -12,10 +14,15 @@ export class ReviewsController {
   }
 
   @Post(':id/reviews')
+  @UseGuards(AuthGuard)
   create(
     @Param('id') id: string,
     @Body(new ValidationPipe({ transform: true })) dto: CreateReviewDto,
+    @Req() req: Request,
   ) {
-    return this.reviewsService.create(id, 'demo-customer', dto);
+    if (!req.user) {
+      throw new UnauthorizedException();
+    }
+    return this.reviewsService.create(id, req.user.sub, dto);
   }
 }

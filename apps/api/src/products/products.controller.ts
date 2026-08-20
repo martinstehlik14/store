@@ -1,7 +1,11 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, UseGuards, ValidationPipe } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { AuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { Role } from '../../generated/prisma/client';
 
 @Controller('products')
 export class ProductsController {
@@ -23,11 +27,15 @@ export class ProductsController {
   }
 
   @Post()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
   create(@Body(new ValidationPipe({ transform: true })) dto: CreateProductDto) {
     return this.productsService.create(dto);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
   update(
     @Param('id') id: string,
     @Body(new ValidationPipe({ transform: true })) dto: UpdateProductDto,
@@ -37,6 +45,8 @@ export class ProductsController {
 
   @Delete(':id')
   @HttpCode(204)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
   async remove(@Param('id') id: string) {
     await this.productsService.remove(id);
   }
