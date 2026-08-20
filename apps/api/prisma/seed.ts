@@ -44,6 +44,7 @@ const users = [
 ];
 
 async function main() {
+  await prisma.cartItem.deleteMany();
   await prisma.review.deleteMany();
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
